@@ -108,4 +108,4 @@ Much of this codebase is modified from existing works, including:
 
 [Synthetix](https://synthetix.io) - Rewards staking contract
 
-[YEarn](https://yearn.finance)/[YFI](https://ygov.finance) - Initial fair distribution implementation
+[YEarn](https://yearn.finance)/[YFI](https://ygov.finance) - Initial fair distribution implementation.
