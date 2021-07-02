@@ -1,4 +1,6 @@
 公有链 联盟链 私有链
+深入理解常用共识机制，如：PoW、PoS、DPoS、PBFT、Paxos、Raft等；
+熟悉常见的公有链和联盟链技术，如：BTC、Ethereum、EOS、Hyperledger Fabric、Fisco BCOS等
 
 DPOS 比如EOS、BTS 不适合公有链
 优点：减少规模，周期短。缺点：弱中心化，节点少，代表性差
