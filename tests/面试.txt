@@ -1,4 +1,5 @@
 公有链 联盟链 私有链
+熟悉现代密码学知识，如：加密算法、数字签名、零知识证明、同态加密、差分隐私等技术；
 深入理解常用共识机制，如：PoW、PoS、DPoS、PBFT、Paxos、Raft等；
 熟悉常见的公有链和联盟链技术，如：BTC、Ethereum、EOS、Hyperledger Fabric、Fisco BCOS等
 
