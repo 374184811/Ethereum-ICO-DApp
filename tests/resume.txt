@@ -3,7 +3,7 @@
 E-mail  ：zkjames0709@sina.com			Github  ：https://github.com/374184811
 专业技能:
 	编程语言与开发环境
-1.	熟练使用Solidity，Java和web 语言JavaScript，HTML，CSS进行项目开发；
+1.	熟练使用Solidity，Java和web 语言JavaScript/Typescript，HTML，CSS进行项目开发；
 2.	熟练的在Linux(Redhat, Ubuntu)环境或windows, MAC下进行编程调试；
 3.	熟练使用Remix Solidity IDE, Eclipse, VMware, IntelliJ IDEA, VSCode等开发工具；
 	软件开发
@@ -20,7 +20,7 @@ E-mail  ：zkjames0709@sina.com			Github  ：https://github.com/374184811
 	2018/5—至今   华为技术有限公司，深圳/东莞   职位：高级软件工程师 
 项目名称：华为云平台产品
 项目功能：隐私保护通话和短信是一款基于基础运营商通信网络能力的B2C互联网产品，主要业务是客户通过平台申请的虚拟号码X捆绑真实号码,用户对外只呈现X号码以达到保护用户的真实号码不被泄露。该平台适用于物流、外卖、招聘、银行、保险等多种业务场景，为用户提供号码订退，号码管理，绑定解绑，申请短信模板和签名,录音下载，短信验证码,话单查询等功能。基于以太坊智能合约DApp的区块链平台，该系统实现资金流、物流、信息流的可信流动包括资金募集、资金锁定、资金支出管理、投票统计、打款等功能的智能合约。
-软件工具：Sodility，Truffle，Ganache，Geth，Angular.js, JavaScript, Java，React, web3.js，mocha，React, Ant Design Pro，Spring Boot，MySQL，IPFS；
+软件工具：Sodility，Truffle，Ganache，Geth，Angular.js, JavaScript/Typescript, Java，React, web3.js，mocha，React, Ant Design Pro，Spring Boot，MySQL，IPFS；
 项目职责：
 1. 担任特性负责人,承担全流程管理包括产品需求设计文档,接口以及数据表设计,代码开发以及检视合入责任,完成端到端交付；
 2. 编写智能合约基于solidity并在将合约部署到太坊测试链；
