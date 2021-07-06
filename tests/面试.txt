@@ -17,8 +17,6 @@ PAXOS:ZK
 50%
 RAFT
 
-联盟链 应用层
-开放联盟链
 比特币 堆栈语言指令按顺序执行，没有循环跳转图灵不完备
 版本
 truffle compile migrate console
