@@ -17,6 +17,13 @@ PAXOS:ZK
 50%
 RAFT
 
+联盟链 私有链 强一致性，正确强一致算法
+公有链 无法 强一致性，最终一致算法
+POW 比特币 莱特币 以太坊前三
+PoS 以太坊四
+DPOS bitshare
+PBFT heyperledger
+
 比特币 堆栈语言指令按顺序执行，没有循环跳转图灵不完备
 版本
 truffle compile migrate console
