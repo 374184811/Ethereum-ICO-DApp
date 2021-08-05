@@ -1,111 +1,114 @@
-# 🍠  YAM Protocol  🍠
-## The Protocol
-Yam is an experimental protocol building upon the most exciting innovations in programmable money and governance. Built by a team of DeFi natives, it seeks to create:
+13. 众筹DApp的部署
+到目前为止，我们已经熟悉了众筹智能合约的开发、编译、部署、自动化测试，也熟悉了众筹 DApp 的框架、如何从智能合约读取数据、如何向智能合约提交数据，做出了可用的众筹 DApp。那么开发完成之后，怎么把这个 DApp 放出去给用户使用呢？这就涉及到了 DApp 的部署。
+众筹 DApp 本质上是架构在 Next.js 之上的 WEB 应用，启动时依赖 Node.js 运行环境，我们可以把 Node.js 服务的部署方法迁移过来，比如服务进程管理、日志管理、配置管理。
+13.1 配置管理
+理论上，所有和代码逻辑无关的内容都应该放在配置文件里面，而不是直接硬编码写在源文件中，比如 web3 配置 provider时传入的主机名和端口。Node.js 应用中做配置管理，通常使用config，如果使用 config 改造我们的项目，要执行如下步骤。
+1.	安装依赖
+npm install --save config@1.30.0
+2.	创建配置文件
+在项目根目录下创建 config 目录，然后在其中创建 3 个文件：
+mkdir config
+touch config/default.js
+touch config/development.js
+touch config/production.js
+3.	提取配置项
+在众筹 DApp 中，我们可以把web3 provider的地址放到配置文件里面，对应的配置文件为：config/default.js
+module.exports = {
+providerUrl: 'http://localhost:8545'
+};
+config/development.js，可以覆盖 default 里面的配置，如果不需要，export 空对象即可：
+module.exports = {};
+config/production.js，可以覆盖 default 里面的配置，如果不需要，export 空对象即可，在设置了 NODE_ENV=production 时生效:
+module.exports = {
+    providerUrl: 'https://server.domain.com:8546'
+};
+需要特别说明的是 config 模块只适用于管理后端配置，那前端的配置怎么办呢？部分敏感的配置信息传给前端也是很大的安全隐患，所以我们可以利用Next.js 内置的配置暴露机制支持给前端和后端不同的配置，在项目根目录下创建 next.config.js，然后在其中输入如下代码：
+const config = require('config'); 
+module.exports = { 
+// 只有后端可用的配置 
+serverRuntimeConfig: {
+   mySecret: 'secret'  // 不能暴露给前端的机密信息
+}, 
+// 前后端都可用的配置 
+publicRuntimeConfig: { 
+providerUrl: config.get('providerUrl')
+}
+};
+4.	引用配置文件
+要修改多少代码取决于我们把哪些内容放到了配置文件里，对于服务端，我们需要修改 scripts 下面的两个脚本：
+deploy.js & sample.js
+const web3 = new Web3(new 
+	Web3.providers.HttpProvider('http://localhost:8545'));
+const config = require('config');
+const web3 = new Web3(new Web3.providers.HttpProvider(config.get('providerUrl')));
+而前端代码中使用配置的方式是，在众筹 DApp 中只需要修改 libs/web3.js 即可：
+import Web3 from 'web3';
+import getConfig from 'next/config';
+const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
 
-•	an elastic supply to seek eventual price stability<br/>
-•	a governable treasury to further support stability<br/>
-•	fully on-chain governance to enable decentralized control and evolution from Day 1<br/>
-•	a fair distribution mechanism that incentivizes key community members to actively take the reins of governance
+let web3;
 
-At its core, YAM is an elastic supply cryptocurrency, which expands and contracts its supply in response to market conditions, initially targeting 1 USD per YAM. This stability mechanism includes one key addition to existing elastic supply models such as Ampleforth: a portion of each supply expansion is used to buy yCurve (a high-yield USD-denominated stablecoin) and add it to the Yam treasury, which is controlled via Yam community governance.
+if(typeof window !== 'undefined' && typeof window.web3 !== 'undefined'){
+    web3 = new Web3(window.web3.currentProvider);
+} else {
+    web3 = new Wb3(new Web3.providers.HttpProvider('http://localhost:8545'));
+    web3 = new Wb3(new Web3.providers.HttpProvider(publicRuntimeConfig.providerUrl));
+}
 
-We have built Yam to be a minimally viable monetary experiment, and at launch there will be zero value in the YAM token. After deployment, it is entirely dependent upon YAM holders to determine its value and future development. We have employed a fork of the Compound governance module, which will ensure all updates to the Yam protocol happen entirely on-chain through community voting.
-
-## Audits
-
-None. Contributors have given their best efforts to ensure the security of these contracts, but make no guarantees. It has been spot checked by just a few pairs of eyes. It is a probability - not just a possibility - that there are bugs. That said, minimal changes were made to the staking/distribution contracts that have seen hundreds of millions flow through them via SNX, YFI, and YFI derivatives. The reserve contract is excessively simple as well. We prioritized staked assets' security first and foremost.
-
-The original devs encourage governance to fund a bug bounty/security audit
-
-The token itself is largely based on COMP and Ampleforth which have undergone audits - but we made non-trivial changes.
-
-The rebaser may also have bugs - but has been tested in multiple scenarios. It is restricted to Externally Owned Accounts (EOAs) calling the rebase function for added security. SafeMath is used everywhere.
-
-If you feel uncomfortable with these disclosures, don't stake or hold YAM. If the community votes to fund an audit, or the community is gifted an audit, there is no assumption that the original devs will be around to implement fixes, and is entirely at their discretion.
-
-## The Token
-The core YAM token uses yCRV as the reserve currency, which is roughly a $1 peg. Each supply expansion (referred to as an inflating rebase), a portion of tokens is minted and used to build up the treasury. This treasury is then in complete ownership of YAM holders via governance.
-
-
-## Distribution
-Rather than allocating a portion of the supply to the founding team, YAM is being distributed in the spirit of YFI: no premine, no founder shares, no VC interests — simply equal-opportunity staking distribution to attract a broad and vision-aligned community to steward the future of the protocol and token.
-
-The initial distribution of YAM will be evenly distributed across eight staking pools: WETH, YFI, MKR, LEND, LINK, SNX, COMP, and ETH/AMPL Uniswap v2 LP tokens. These pools were chosen intentionally to reach a broad swath of the overall DeFi community, as well as specific communities with a proven commitment to active governance and an understanding of complex tokenomics.
-
-Following the launch of the initial distribution pools, a second distribution wave will be incentivized through a YAM/yCRV Uniswap pool. This pool will allow Uniswap's TWAP-based oracle to provide necessary input as the basis for rebase calculations, as well as provide liquidity for the rebase to purchase yCurve for the treasury.
-
-
-## Rebases
-
-Rebases are controlled by an external contract called the Rebaser. This is comparable to Ampleforth's `monetaryPolicy` contract. It dictates how large the rebase is and what happens on the rebase. The YAM token just changes the supply based on what this contract provides it.
-
-There are a requirements before rebases are active:
-<br />
-•	Liquid YAM/yCRV market<br/>
-•	`init_twap()`<br/>
-•	`activate_rebasing()`<br/>
-
-Following the launch of the second pool, rebasing can begin its activation phase. This begins with `init_twap()` on the rebaser contract. Anyone can call this at anytime once there is a YAM/yCRV Uniswap V2 market. The oracle is designed to be 12 hours between checkpoints. Given that, 12 hours after `init_twap()` is called, anyone can call `activate_rebasing()`. This turns rebasing on, permanently. Now anyone can call `rebase()` when `inRebaseWindow() == true;`.
-
-In a rebase, the order of operations are:
-<br />
-•	ensure in rebase window<br/>
-•	calculate how far off-price is from the peg<br/>
-•	dampen the rebase by the rebaseLag<br/>
-•	if positive calculate protocol mint amount<br/>
-•	change scaling factor, (in/de)flating the supply<br/>
-•	sync uniswap, mint, sell to uniswap, transfer excess YAM and bought yCRV to reserves<br/>
-•	call any extra functions governance adds in the future (i.e. Balancer gulps)<br/>
-
-
-## Governance
-Governance is entirely dictated by YAM holders from the start. Upon deployment, ownership of all YAM protocol contracts was relinquished to the timelocked Governance contract or removed entirely. At the very least, this can be seen as a reference implementation for a truly decentralized protocol.
-
-# Development
-### Building
-This repo uses truffle. Ensure that you have truffle installed. Given the composability aspect of this
-
-Then, to build the contracts run:
-```
-$ truffle compile
-```
-
-
-
-To run tests, run against a single test package, i.e.:
-```
-$ sh startBlockchain.sh
-$ truffle migrate --network distribution
-$ python scripts/clean.py
-$ cd jsLib
-$ jest deployment
-$ jest token
-$ jest rebase
-$ jest governance
-$ jest governorAlpha
-$ jest distribution
-```
-The need to run one-by-one seems to be a limitation of jest + ganache.
-
-The distribution tests require specific tokens. These are acquired by using the ganache unlock_account function. If you receive fails, the owner likely decreased their ownership of that token. Just replace any instances of that address with another holder of the token.
-
-Note: some governance tests require a different ganache setup. You will encounter a warning (but not a failed test) if the wrong type of ganache is setup. To run the correct one:
-```
-$ sh startBlockchainMining.sh
-$ truffle migrate --network distribution
-$ python scripts/clean.py
-$ cd jsLib
-$ jest governance
-```
-
-
-#### Attributions
-Much of this codebase is modified from existing works, including:
-
-[Compound](https://compound.finance) - Jumping off point for token code and governance
-
-[Ampleforth](https://ampleforth.org) - Initial rebasing mechanism, modified to better suit the YAM protocol
-
-[Synthetix](https://synthetix.io) - Rewards staking contract
-
-[YEarn](https://yearn.finance)/[YFI](https://ygov.finance) - Initial fair distribution implementation.
+export default web3;
+5.	回归测试
+代码改动之后，重新启动服务，浏览页面，试用几个功能即可，保证一切正常。
+13.2 日志管理
+众筹 DApp 中暂时只需要记录服务进程的启动日志、运行时抛出的异常即可，日志目录创建好，可以提高项目的可移植性： 
+	在根目录下创建 logs 目录； 
+	在 logs 目录下创建 .gitkeep 空文件，并且提交该文件； 
+	然后把这个目录加到 .gitignore 里面
+13.3 服务进程管理
+DApp 服务进程管理非 pm2莫属了，不管 DApp 部署在常规虚拟机、服务器还是在 docker 容器里面，都可以使用 pm2 来管理服务进程，使用 pm2 来管理服务进程的步骤如下：
+1.	安装依赖
+npm install --save-dev pm2
+2.	添加配置文件
+根目录下创建 pm2.json，输入如下代码：
+{
+    "apps": [
+        {
+            "name": "ico-dapp",
+            "script": "./server.js",
+            "out_file": "./logs/out.log",
+            "error_file": "./logs/error.log",
+            "log_date_format": "YYYY-MM-DD HH:mm:ss",
+            "instances": 0,
+            "exec_mode": "cluster",
+            "max_memory_restart": "500M",
+            "merge_logs": true,
+            "env": {
+                "NODE_ENV": "production"
+            }
+        }
+    ]
+}
+3.	修改启动命令
+直接替换 package.json 中原有的 start 命令如下：
+"start": "NODE_ENV=production node server.js"
+"start": "pm2 restart pm2.json"
+这里我们使用了 pm2 restart，而不是 pm2 start，是为了兼容之前已经启动过服务部署新版本时的情况。
+13.4 无情自动化
+把工作流中的各个环节使用自动化的命令串起来，能提高效率，还能减少过多人工操作导致的失误，具体到智能合约 + DApp 项目中，合约部署时，需要重新编译，需要跑通所有的测试；DApp 部署时需要部署最新的代码，并且代码是构建过的。用流程化的语言来描述如下：
+	合约编译 --> 合约自动化测试 --> 合约部署
+	DApp 构建 --> DApp 部署
+使用 npm script 可以方便的实现上面的两条主线：合约部署、DApp 部署。修改 package.json 如下：
+"scripts": {
+    "compile": "node scripts/compile.js",
+    "pretest": "npm run compile",
+    "test": "./node_modules/mocha/bin/mocha tests/",
+    "predeploy": "npm run compile",
+    "predeploy": "npm run test",
+    "deploy": "node scripts/deploy.js",
+    "dev": "node server.js",
+    "build": "next build",
+    "prestart": "npm run build",
+    "start": "NODE_ENV=production node server.js"
+  },
+这样，之后我们做部署工作时，只要记住两条命令就可以了：
+	如果要部署智能合约，执行：npm run deploy
+	如果要部署 DApp，执行：npm run start
