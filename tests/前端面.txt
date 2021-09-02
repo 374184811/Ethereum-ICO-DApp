@@ -1,3 +1,37 @@
+图片过多
+懒加载 src = datasrc  
+小图标 iconfont font-family css
+小图片 大雪碧图 backgroundposition 修改坐标
+请求过多
+
+requests个数 resources大小
+domcontentload html
+load 所有
+
+nginx 做cdn 静态资源合并 concat js css一个
+webpack 打包
+
+js库 按需加载库;import button;babel插件
+前端路由 懒加载 component react.lazy 动态import().then
+webpack 遇到import 会单独打包 promise
+pending 渲染loading 组件 resvloe 
+
+文件多大
+webpack打包 混淆(长变量变一个) 压缩:注释空格
+gzip
+
+base64转码 webpack url-loader
+webp
+配合缓存 cachecontrol etag
+
+创造虚拟节点createdocufragment 分段渲染
+
+将父元素设置为 display:flex，并且设置 align-items:center;justify-content:center;
+margin:auto position: absolute translate(-50%,-50%);
+
+JSONP：通过动态创建 script，再请求一个带参网址实现跨域通信。document.domain + iframe 跨域：两个页面都通过 js 强制设置 document.domain 为基础主域，就实现了同域。 location.hash + iframe 跨域：a 欲与 b 跨域相互通信，通过中间页 c 来实现。 三个页面， 不同域之间利用 iframe 的 location.hash 传值，相同域之间直接 js 访问来通信。 window.name + iframe跨域：通过iframe的src属性由外域转向本地域，跨域数据即由iframe 的 window.name 从外域传递到本地域。 postMessage 跨域：可以跨域操作的 window 属性之一。 CORS：服务端设置 Access-Control-Allow-Origin 即可，前端无须设置，若要带 cookie 请 求，前后端都需要设置。
+
+
 跨域
 缓存
 cookie
