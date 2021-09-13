@@ -1,0 +1,511 @@
+图片减少加载量：
+懒加载：滚动条监听，滚动条距离浏览器顶高度===图片距离顶部高度
+data-src 赋值到src
+小图标：font-family iconfont
+小图片多：雪碧图 background position； base64
+首页请求量多：
+CDN(ngix concat 插件合并文件 逻辑打包)；网络缓存
+webpack物理打包
+代码组件按需加载 babel插件
+前端路由懒加载（spa）：react lazy 分割打包 返回promise渲染控制
+
+资源大：
+混淆压缩
+gzip on ngix
+
+webp 比png 体积小25%
+10 500ms 60 3s 7s
+
+打包：不常用包 cache-control：一年 和etag
+频繁： cache-control：no cache etag
+
+
+手撕：
+创建对象的6种方式总结
+工厂模式:
+function createPerson(name,age,family) {
+    var o = new Object();
+    o.name = name;
+    o.age = age;
+    o.family = family;
+    o.say = function(){
+        alert(this.name);
+    }
+    return o;
+}
+
+var person1 =  createPerson("lisi",21,["lida","lier","wangwu"]);   //instanceof无法判断它是谁的实例，只能判断他是对象，构造函数都可以判断出
+var person2 =  createPerson("wangwu",18,["lida","lier","lisi"]);
+console.log(person1 instanceof Object);
+构造函数模式
+function Person(name,age,family) {
+    this.name = name;
+    this.age = age;
+    this.family = family;
+    this.say = function(){
+        alert(this.name);
+    }
+}
+var person1 = new Person("lisi",21,["lida","lier","wangwu"]);
+var person2 = new Person("lisi",21,["lida","lier","lisi"]);
+console.log(person1 instanceof Object); //true
+console.log(person1 instanceof Person); //true
+console.log(person2 instanceof Object); //true
+console.log(person2 instanceof Person); //true
+console.log(person1.constructor);      //constructor 属性返回对创建此对象的数组、函数的引用
+原型模式
+function Person() {
+}
+
+Person.prototype.name = "lisi";
+Person.prototype.age = 21;
+Person.prototype.family = ["lida","lier","wangwu"];
+Person.prototype.say = function(){
+    alert(this.name);
+};
+console.log(Person.prototype);   //Object{name: 'lisi', age: 21, family: Array[3]}
+
+var person1 = new Person();        //创建一个实例person1
+console.log(person1.name);        //lisi
+
+var person2 = new Person();        //创建实例person2
+person2.name = "wangwu";
+person2.family = ["lida","lier","lisi"];
+console.log(person2);            //Person {name: "wangwu", family: Array[3]}
+// console.log(person2.prototype.name);         //报错
+console.log(person2.age);              //21
+混合模式（构造函数模式+原型模式）
+function Person(name,age,family){
+    this.name = name;
+    this.age = age;
+    this.family = family;
+}
+
+Person.prototype = {
+    constructor: Person,  //每个函数都有prototype属性，指向该函数原型对象，原型对象都有constructor属性，这是一个指向prototype属性所在函数的指针
+    say: function(){
+        alert(this.name);
+    }
+}
+
+var person1 = new Person("lisi",21,["lida","lier","wangwu"]);
+console.log(person1);
+var person2 = new Person("wangwu",21,["lida","lier","lisi"]);
+console.log(person2);
+NEW
+创建空对象， this指向执行构造函数，新对象——proto——指向构造函数prototype对象，判断对象，是返回
+function myNew（）{
+	// var obj = {};
+	var Constroctor = [].shift.call(arguments);
+	var obj = Object.create(Constroctor.prototype) //obj.__proto__ = Constroctor.prototype;
+	var result = Constroctor.apply(obj, arguments);
+	return result instanceof Object ? result : obj;
+}
+
+PROMISE
+function myPromise (fn) {
+    let val = null, succcallbacks = [], failcallbacks = []
+    let data = null, reason = null, status = 'pending'
+    
+    this.then = function (fulfilled, rejected) {
+        if (status === 'pending') {
+            succcallbacks.push(fulfilled)
+            failcallbacks.push(rejected)
+            return this
+        } else if (status === 'resolve') {
+            fulfilled(data)
+        } else {
+            rejected(reason)
+        }
+    }
+    function resolve (val) {
+        setTimeout(() => {
+            data = val
+            status = 'fulfilled'
+            succcallbacks.forEach((callback) => {
+                callback(val)
+            })
+        }, 0)
+    }
+    function reject (val) {
+        setTimeout(() => {
+            reason = val
+            status = 'rejected'
+            failcallbacks.forEach((callback) => {
+                callback(val)
+            })
+        }, 0)
+    }
+    fn(resolve, reject)
+}
+// 测试
+function test(num) {
+    return new myPromise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(num)
+        }, 1000)
+    })
+}
+
+BIND
+// bind
+Function.prototype.bind = function(context){
+	let args = [].slice.call(arguments, 1)
+	let that = this
+	function f(){
+		return that.apply(this instanceof f ? this : context, args.concat([].slice.call()))
+	}
+	f.prototype = Object.create(this.prototype)
+	return f;
+}
+// apply
+Function.prototype.apply(context, arg) {
+	if(typeof this !== 'function') {
+		throw new Error('类型错误')
+	}
+	context = context || window
+	context.func = this
+	let result = context.func(...arg)
+	delete context.func
+	return result
+}
+// call
+Function.prototype.call(context, ...arg) {
+	if(typeof this !== 'function') {
+		throw new Error('类型错误')
+	}
+	context = context || window
+	context.func = this
+	let result = context.func(...arg)
+	delete context.func
+	return result
+}
+----------------
+instanceof
+// instanceof 是通过原型链判断的，即判断构造函数的原型对象是否在 obj 的原型链上
+function InstanceOf(obj, Fun){
+	let left = onj.__proto__
+	let right = Fun.prototype
+	while(1){
+		if(left === null) {
+			return false
+		}
+		if(left === right){
+			return true
+		}
+		left = left.__proto__
+	}
+}
+// 深拷贝
+// 方法1
+let newObj = JSON.parse(JSON.stringify(obj))
+// 方法2
+function deepClone(obj){
+	let newObj = Array.isArray(obj) ? [] : {}
+	for(let i in obj){
+		newObj[i] = typeof obj[i] === 'object' ? deepClone(obj[i]) : obj[i]
+	}
+	return newObj
+}
+数组扁平化
+1.
+flatArr123.flat(Infinity)
+2.
+function flatten3(arr) {
+    return arr.toString().split(',').map(x => +x)
+}
+3.
+function flatten(arr){
+	let res = []
+	while(arr.length > 0){
+		let tmp = arr.pop()
+		if(Array.isArray(tmp)){
+			arr.push(...tmp)
+		}else{
+			res.unshift(tmp)
+		}
+	}
+	return res
+}
+
+// 节流函数（在规定的时间间隔内只触发一次事件处理函数，如果多次触发，则什么也不做）
+function throttle(func, wait){
+	let start = Date.now()
+	return function(){
+		let end = Date.now()
+		if(end - start > wait){
+			return func.apply(this, arguments)
+			start = end
+		}
+	}
+}
+// 防抖函数（在规定的时间间隔内只触发一次事件处理函数，如果多次触发则重新设置计时器，即把在规定时间内多次触发的事件合并为一次）
+function debounce(func, wait){
+	let timer = null
+	return function() {
+		if(timer !== null){
+			clearTimeout(timer)
+			timer = null
+		}
+		timer = setTimeout(() => {
+			func.apply(this, arguments)
+		}, wait)
+	}
+}
+
+单例模式
+class LoginForm {
+    constructor () {
+        this.state = 'hide'
+    }
+    show () {
+        if (this.state === 'show') {
+            console.log('已经show')
+        }
+        this.state = 'show'
+        console.log('登录框show成功')
+    }
+    hide () {
+        if (this.state === 'hide') {
+            console.log('已经hide')
+        }
+        this.state = 'hide'
+        console.log('登录框hide成功')
+    }
+}
+
+LoginForm.getInstance = (function () {
+    let instance = null
+    return function () {
+        if (!instance) {
+            instance = new LoginForm()
+        }
+        return instance
+    }
+})()
+运用发布订阅者模式
+function lazyMan(name) {
+    // 任务清单队列
+    this.taskList = []
+    this.name = name
+    console.log(`Hi I am ${name}`)
+    setTimeout(() => this.next())
+}
+lazyMan.prototype = {
+    // 订阅方法
+    eat (food) {
+        const fn = () => {
+            console.log(`i am eating ${food}`);
+            this.next()
+        }
+        this.taskList.push(fn)
+        return this
+    },
+    sleepFirst (time) {
+        const fn = () => {
+            setTimeout(() => {
+                console.log(`等待了${time}秒`);
+                this.next()
+            }, time*1000)
+        }
+        this.taskList.unshift(fn)
+        return this
+    },
+    sleep (time) {
+        const fn = () => {
+            setTimeout(() => {
+                console.log(`等待了${time}秒`);
+                this.next()
+            }, time*1000)
+        }
+        this.taskList.push(fn)
+        return this
+    },
+    // 事件发布
+    next () {
+        const fn = this.taskList.shift()
+        fn && fn()
+    }
+}
+function LazyMan (name) {
+    return new lazyMan(name)
+}
+
+LazyMan('Tony')
+LazyMan('Tony').sleep(10).eat('lunch')
+LazyMan('Tony').eat('lunch').sleep(10).eat('dinner')
+LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk food')
+
+2.
+class EventEmitter {
+  constructor() {
+    this.cache = {};
+  }
+  on(name, fn) {
+    if (this.cache[name]) {
+      this.cache[name].push(fn);
+    } else {
+      this.cache[name] = [fn];
+    }
+  }
+  off(name, fn) {
+    let tasks = this.cache[name];
+    if (tasks) {
+      const index = tasks.findIndex((f) => f === fn || f.callback === fn);
+      index >= 0 ? tasks.splice(index, 1) : "";
+    }
+  }
+  emit(name, once, ...args) {
+    if (this.cache[name]) {
+      // 创建副本
+      let tasks = this.cache[name].slice();
+      for (const fn of tasks) {
+        fn(...args);
+      }
+      once ? delete this.cache[name] : "";
+    }
+  }
+}
+
+let demo = new EventEmitter();
+demo.on("wenbo", function (data) {
+  console.log("wenbo", data);
+});
+let fn1 = function (data) {
+  console.log("hello:", data);
+};
+demo.on("wenbo", fn1);
+
+demo.emit("wenbo", false, "world");
+demo.off("wenbo", fn1);
+demo.emit("wenbo", false, "world");
+
+//wenbo world
+//hello: world
+
+//wenbo world
+
+=============================================
+图片加载优化懒加载
+//   获取全部img元素 并且将类数组转化成数组
+let imgList = [...document.querySelectorAll("img")];
+let len = imgList.length;
+// 图片懒加载
+function imgLazyLoad() {
+  let count = 0;
+  return (function () {
+    let isLoadList = [];
+    imgList.forEach((item, index) => {
+      let h = item.getBoundingClientRect();
+      //  判断图片是否快要滚动道可视区域
+      if (h.top < window.innerHeight + 200) {
+        item.src = item.dataset.src;
+        console.log(item.dataset.src);
+        isLoadList.push(index);
+        count++;
+        // 全部加载 移出scroll事件
+        if (len == count) {
+          document.removeEventListener("scroll", imgLazyLoad);
+        }
+      }
+    });
+    // 移出已经加载完成的图片
+    imgList = imgList.filter((img, index) => !isLoadList.includes(index));
+  })();
+}
+// 节流函数
+function throttle(fun, wait) {
+  var lastTime = 0;
+  return function () {
+    var _this = this;
+    var _arg = arguments;
+    var nowTime = new Date().getTime();
+    if (nowTime - lastTime > wait) {
+      fun.apply(_this, _arg);
+      lastTime = nowTime;
+    }
+  };
+}
+// 默认执行一次加载首屏图片
+imgLazyLoad();
+// 节流执行
+document.addEventListener("scroll", throttle(imgLazyLoad, 200));
+===========================
+// 快排排序
+function quickSort(arr) {
+  // 数组长度为1 直接返回
+  if (arr.length <= 1) return arr;
+  var left = [],
+    right = [];
+  var centerIndex = Math.floor(arr.length / 2);
+  // 定义中间值
+  var center = arr[centerIndex];
+  for (let i = 0; i < arr.length; i++) {
+    // 小于中间值数据添加到left
+    if (arr[i] < center) {
+      left.push(arr[i]);
+    } else if (arr[i] > center) {
+      // 大于中间值数据添加到right
+      right.push(arr[i]);
+    }
+  }
+  // 递归返回 concat连接返回数据
+  return quickSort(left).concat([center], quickSort(right));
+}
+// 冒泡排序
+function bubbleSort(arr) {
+  for (var i = 0; i < arr.length - 1; i++) {
+    for (var j = i + 1; j < arr.length; j++) {
+      if (arr[i] > arr[j]) {
+        var temp = arr[j];
+        arr[j] = arr[i];
+        arr[i] = temp;
+      }
+    }
+  }
+  return arr;
+}
+=========
+二叉树遍历
+// 前序遍历
+function preorderTraversal(root, arr = []) {
+  if (root === null) return
+  arr.push(root.val)
+  preorderTraversal(root.left, arr)
+  preorderTraversal(root.right, arr)
+  return arr
+}
+// 中序遍历
+function inorderTraversal(root, arr = []) {
+  if (root === null) return
+  inorderTraversal(root.left, arr)
+  arr.push(root.val)
+  inorderTraversal(root.right, arr)
+  return arr
+}
+// 后序遍历
+function postorderTraversal(root, arr = []) {
+  if (root === null) return
+  postorderTraversal(root.left, arr)
+  postorderTraversal(root.right, arr)
+  arr.push(root.val)
+  return arr
+}
+==========
+字符串的全排列
+function permutation (str) {
+    let res = [str[0]]
+    for (let i = 1; i < str.length; i++) {
+        res = fp(res, str[i])
+    }
+    return [...new Set(res)].sort()
+}
+
+function fp (arr, ch) {
+    let tmp = []
+    for (let i = 0; i <= arr[0].length; i++) {
+        tmp = tmp.concat(arr.map((x) => x.slice(0, i) + ch + x.slice(i)))
+    }
+    return tmp
+}
+// console.log(permutation('abc'));
