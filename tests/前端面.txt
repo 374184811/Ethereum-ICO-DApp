@@ -1,37 +1,3 @@
-图片过多
-懒加载 src = datasrc  
-小图标 iconfont font-family css
-小图片 大雪碧图 backgroundposition 修改坐标
-请求过多
-
-requests个数 resources大小
-domcontentload html
-load 所有
-
-nginx 做cdn 静态资源合并 concat js css一个
-webpack 打包
-
-js库 按需加载库;import button;babel插件
-前端路由 懒加载 component react.lazy 动态import().then
-webpack 遇到import 会单独打包 promise
-pending 渲染loading 组件 resvloe 
-
-文件多大
-webpack打包 混淆(长变量变一个) 压缩:注释空格
-gzip
-
-base64转码 webpack url-loader
-webp
-配合缓存 cachecontrol etag
-
-创造虚拟节点createdocufragment 分段渲染
-
-将父元素设置为 display:flex，并且设置 align-items:center;justify-content:center;
-margin:auto position: absolute translate(-50%,-50%);
-
-JSONP：通过动态创建 script，再请求一个带参网址实现跨域通信。document.domain + iframe 跨域：两个页面都通过 js 强制设置 document.domain 为基础主域，就实现了同域。 location.hash + iframe 跨域：a 欲与 b 跨域相互通信，通过中间页 c 来实现。 三个页面， 不同域之间利用 iframe 的 location.hash 传值，相同域之间直接 js 访问来通信。 window.name + iframe跨域：通过iframe的src属性由外域转向本地域，跨域数据即由iframe 的 window.name 从外域传递到本地域。 postMessage 跨域：可以跨域操作的 window 属性之一。 CORS：服务端设置 Access-Control-Allow-Origin 即可，前端无须设置，若要带 cookie 请 求，前后端都需要设置。
-
-
 跨域
 缓存
 cookie
@@ -195,3 +161,545 @@ http3和http2的区别是什么？
 如果让你来做一个富文本编辑器，你觉得主要用了浏览器的什么功能？
 用过canvas吗？
 如果让你来做动画，嵌入到我们的网站里，你会有什么方法？
+
+
+=====================================================
+降低请求量：合并资源，减少 HTTP 请求数，minify / gzip 压缩，webP，lazyLoad。
+加快请求速度：预解析 DNS，减少域名数，并行加载，CDN 分发。
+缓存：HTTP 协议缓存请求，离线缓存 manifest，离线数据缓存 localStorage。
+渲染：JS/CSS 优化，加载顺序，服务端渲染，pipeline。
+======
+图片减少加载量：
+懒加载：滚动条监听，滚动条距离浏览器顶高度===图片距离顶部高度
+data-src 赋值到src
+小图标：font-family iconfont
+小图片多：雪碧图 background position； base64
+首页请求量多：
+CDN(ngix concat 插件合并文件 逻辑打包)；网络缓存
+webpack物理打包
+代码组件按需加载 babel插件
+前端路由懒加载（spa）：react lazy 分割打包 返回promise渲染控制
+
+资源大：
+混淆压缩
+gzip on ngix
+
+webp 比png 体积小25%
+10 500ms 60 3s 7s
+
+打包：不常用包 cache-control：一年 和etag
+频繁： cache-control：no cache etag
+
+不在布局信息改变时做 DOM 查询，
+使用 csstext,className 一次性改变属性
+使用 fragment
+
+
+手撕：
+创建对象的6种方式总结
+1、原型链继承，将父类的实例作为子类的原型，他的特点是实例是子类的实例也是父
+类的实例，父类新增的原型方法/属性，子类都能够访问，并且原型链继承简单易于实
+现，缺点是来自原型对象的所有属性被所有实例共享，无法实现多继承，无法向父类构
+造函数传参。
+2、构造继承，使用父类的构造函数来增强子类实例，即复制父类的实例属性给子类，
+构造继承可以向父类传递参数，可以实现多继承，通过 call 多个父类对象。但是构造继
+承只能继承父类的实例属性和方法，不能继承原型属性和方法，无法实现函数服用，每
+个子类都有父类实例函数的副本，影响性能
+3、实例继承，为父类实例添加新特性，作为子类实例返回，实例继承的特点是不限制
+调用方法，不管是 new 子类（）还是子类（）返回的对象具有相同的效果，缺点是实
+例是父类的实例，不是子类的实例，不支持多继承
+4、拷贝继承：特点：支持多继承，缺点：效率较低，内存占用高（因为要拷贝父类的
+属性）无法获取父类不可枚举的方法（不可枚举方法，不能使用 for in 访问到）
+5、组合继承：通过调用父类构造，继承父类的属性并保留传参的优点，然后通过将父
+类实例作为子类原型，实现函数复用
+6、寄生组合继承：通过寄生方式，砍掉父类的实例属性，这样，在调用两次父类的构
+造的时候，就不会初始化两次实例方法/属性，避免的组合继承的缺点
+===========================
+工厂模式:
+function createPerson(name,age,family) {
+    var o = new Object();
+    o.name = name;
+    o.age = age;
+    o.family = family;
+    o.say = function(){
+        alert(this.name);
+    }
+    return o;
+}
+
+var person1 =  createPerson("lisi",21,["lida","lier","wangwu"]);   //instanceof无法判断它是谁的实例，只能判断他是对象，构造函数都可以判断出
+var person2 =  createPerson("wangwu",18,["lida","lier","lisi"]);
+console.log(person1 instanceof Object);
+构造函数模式
+function Person(name,age,family) {
+    this.name = name;
+    this.age = age;
+    this.family = family;
+    this.say = function(){
+        alert(this.name);
+    }
+}
+var person1 = new Person("lisi",21,["lida","lier","wangwu"]);
+var person2 = new Person("lisi",21,["lida","lier","lisi"]);
+console.log(person1 instanceof Object); //true
+console.log(person1 instanceof Person); //true
+console.log(person2 instanceof Object); //true
+console.log(person2 instanceof Person); //true
+console.log(person1.constructor);      //constructor 属性返回对创建此对象的数组、函数的引用
+原型模式
+function Person() {
+}
+
+Person.prototype.name = "lisi";
+Person.prototype.age = 21;
+Person.prototype.family = ["lida","lier","wangwu"];
+Person.prototype.say = function(){
+    alert(this.name);
+};
+console.log(Person.prototype);   //Object{name: 'lisi', age: 21, family: Array[3]}
+
+var person1 = new Person();        //创建一个实例person1
+console.log(person1.name);        //lisi
+
+var person2 = new Person();        //创建实例person2
+person2.name = "wangwu";
+person2.family = ["lida","lier","lisi"];
+console.log(person2);            //Person {name: "wangwu", family: Array[3]}
+// console.log(person2.prototype.name);         //报错
+console.log(person2.age);              //21
+混合模式（构造函数模式+原型模式）
+function Person(name,age,family){
+    this.name = name;
+    this.age = age;
+    this.family = family;
+}
+
+Person.prototype = {
+    constructor: Person,  //每个函数都有prototype属性，指向该函数原型对象，原型对象都有constructor属性，这是一个指向prototype属性所在函数的指针
+    say: function(){
+        alert(this.name);
+    }
+}
+
+var person1 = new Person("lisi",21,["lida","lier","wangwu"]);
+console.log(person1);
+var person2 = new Person("wangwu",21,["lida","lier","lisi"]);
+console.log(person2);
+NEW
+创建空对象， this指向执行构造函数，新对象——proto——指向构造函数prototype对象，判断对象，是返回
+function myNew（）{
+	// var obj = {};
+	var Constroctor = [].shift.call(arguments);
+	var obj = Object.create(Constroctor.prototype) //obj.__proto__ = Constroctor.prototype;
+	var result = Constroctor.apply(obj, arguments);
+	return result instanceof Object ? result : obj;
+}
+
+PROMISE
+function myPromise (fn) {
+    let val = null, succcallbacks = [], failcallbacks = []
+    let data = null, reason = null, status = 'pending'
+    
+    this.then = function (fulfilled, rejected) {
+        if (status === 'pending') {
+            succcallbacks.push(fulfilled)
+            failcallbacks.push(rejected)
+            return this
+        } else if (status === 'resolve') {
+            fulfilled(data)
+        } else {
+            rejected(reason)
+        }
+    }
+    function resolve (val) {
+        setTimeout(() => {
+            data = val
+            status = 'fulfilled'
+            succcallbacks.forEach((callback) => {
+                callback(val)
+            })
+        }, 0)
+    }
+    function reject (val) {
+        setTimeout(() => {
+            reason = val
+            status = 'rejected'
+            failcallbacks.forEach((callback) => {
+                callback(val)
+            })
+        }, 0)
+    }
+    fn(resolve, reject)
+}
+// 测试
+function test(num) {
+    return new myPromise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(num)
+        }, 1000)
+    })
+}
+
+BIND
+// bind
+Function.prototype.bind = function(context){
+	let args = [].slice.call(arguments, 1)
+	let that = this
+	function f(){
+		return that.apply(this instanceof f ? this : context, args.concat([].slice.call()))
+	}
+	f.prototype = Object.create(this.prototype)
+	return f;
+}
+// apply
+Function.prototype.apply(context, arg) {
+	if(typeof this !== 'function') {
+		throw new Error('类型错误')
+	}
+	context = context || window
+	context.func = this
+	let result = context.func(...arg)
+	delete context.func
+	return result
+}
+// call
+Function.prototype.call(context, ...arg) {
+	if(typeof this !== 'function') {
+		throw new Error('类型错误')
+	}
+	context = context || window
+	context.func = this
+	let result = context.func(...arg)
+	delete context.func
+	return result
+}
+----------------
+instanceof
+// instanceof 是通过原型链判断的，即判断构造函数的原型对象是否在 obj 的原型链上
+function InstanceOf(obj, Fun){
+	let left = onj.__proto__
+	let right = Fun.prototype
+	while(1){
+		if(left === null) {
+			return false
+		}
+		if(left === right){
+			return true
+		}
+		left = left.__proto__
+	}
+}
+// 深拷贝
+// 方法1
+let newObj = JSON.parse(JSON.stringify(obj))
+// 方法2
+function deepClone(obj){
+	let newObj = Array.isArray(obj) ? [] : {}
+	for(let i in obj){
+		newObj[i] = typeof obj[i] === 'object' ? deepClone(obj[i]) : obj[i]
+	}
+	return newObj
+}
+数组扁平化
+1.
+flatArr123.flat(Infinity)
+2.
+function flatten3(arr) {
+    return arr.toString().split(',').map(x => +x)
+}
+3.
+function flatten(arr){
+	let res = []
+	while(arr.length > 0){
+		let tmp = arr.pop()
+		if(Array.isArray(tmp)){
+			arr.push(...tmp)
+		}else{
+			res.unshift(tmp)
+		}
+	}
+	return res
+}
+
+// 节流函数（在规定的时间间隔内只触发一次事件处理函数，如果多次触发，则什么也不做）
+function throttle(func, wait){
+	let start = Date.now()
+	return function(){
+		let end = Date.now()
+		if(end - start > wait){
+			return func.apply(this, arguments)
+			start = end
+		}
+	}
+}
+// 防抖函数（在规定的时间间隔内只触发一次事件处理函数，如果多次触发则重新设置计时器，即把在规定时间内多次触发的事件合并为一次）
+function debounce(func, wait){
+	let timer = null
+	return function() {
+		if(timer !== null){
+			clearTimeout(timer)
+			timer = null
+		}
+		timer = setTimeout(() => {
+			func.apply(this, arguments)
+		}, wait)
+	}
+}
+
+单例模式
+class LoginForm {
+    constructor () {
+        this.state = 'hide'
+    }
+    show () {
+        if (this.state === 'show') {
+            console.log('已经show')
+        }
+        this.state = 'show'
+        console.log('登录框show成功')
+    }
+    hide () {
+        if (this.state === 'hide') {
+            console.log('已经hide')
+        }
+        this.state = 'hide'
+        console.log('登录框hide成功')
+    }
+}
+
+LoginForm.getInstance = (function () {
+    let instance = null
+    return function () {
+        if (!instance) {
+            instance = new LoginForm()
+        }
+        return instance
+    }
+})()
+运用发布订阅者模式
+function lazyMan(name) {
+    // 任务清单队列
+    this.taskList = []
+    this.name = name
+    console.log(`Hi I am ${name}`)
+    setTimeout(() => this.next())
+}
+lazyMan.prototype = {
+    // 订阅方法
+    eat (food) {
+        const fn = () => {
+            console.log(`i am eating ${food}`);
+            this.next()
+        }
+        this.taskList.push(fn)
+        return this
+    },
+    sleepFirst (time) {
+        const fn = () => {
+            setTimeout(() => {
+                console.log(`等待了${time}秒`);
+                this.next()
+            }, time*1000)
+        }
+        this.taskList.unshift(fn)
+        return this
+    },
+    sleep (time) {
+        const fn = () => {
+            setTimeout(() => {
+                console.log(`等待了${time}秒`);
+                this.next()
+            }, time*1000)
+        }
+        this.taskList.push(fn)
+        return this
+    },
+    // 事件发布
+    next () {
+        const fn = this.taskList.shift()
+        fn && fn()
+    }
+}
+function LazyMan (name) {
+    return new lazyMan(name)
+}
+
+LazyMan('Tony')
+LazyMan('Tony').sleep(10).eat('lunch')
+LazyMan('Tony').eat('lunch').sleep(10).eat('dinner')
+LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk food')
+
+2.
+class EventEmitter {
+  constructor() {
+    this.cache = {};
+  }
+  on(name, fn) {
+    if (this.cache[name]) {
+      this.cache[name].push(fn);
+    } else {
+      this.cache[name] = [fn];
+    }
+  }
+  off(name, fn) {
+    let tasks = this.cache[name];
+    if (tasks) {
+      const index = tasks.findIndex((f) => f === fn || f.callback === fn);
+      index >= 0 ? tasks.splice(index, 1) : "";
+    }
+  }
+  emit(name, once, ...args) {
+    if (this.cache[name]) {
+      // 创建副本
+      let tasks = this.cache[name].slice();
+      for (const fn of tasks) {
+        fn(...args);
+      }
+      once ? delete this.cache[name] : "";
+    }
+  }
+}
+
+let demo = new EventEmitter();
+demo.on("wenbo", function (data) {
+  console.log("wenbo", data);
+});
+let fn1 = function (data) {
+  console.log("hello:", data);
+};
+demo.on("wenbo", fn1);
+
+demo.emit("wenbo", false, "world");
+demo.off("wenbo", fn1);
+demo.emit("wenbo", false, "world");
+
+//wenbo world
+//hello: world
+
+//wenbo world
+
+=============================================
+图片加载优化懒加载
+//   获取全部img元素 并且将类数组转化成数组
+let imgList = [...document.querySelectorAll("img")];
+let len = imgList.length;
+// 图片懒加载
+function imgLazyLoad() {
+  let count = 0;
+  return (function () {
+    let isLoadList = [];
+    imgList.forEach((item, index) => {
+      let h = item.getBoundingClientRect();
+      //  判断图片是否快要滚动道可视区域
+      if (h.top < window.innerHeight + 200) {
+        item.src = item.dataset.src;
+        console.log(item.dataset.src);
+        isLoadList.push(index);
+        count++;
+        // 全部加载 移出scroll事件
+        if (len == count) {
+          document.removeEventListener("scroll", imgLazyLoad);
+        }
+      }
+    });
+    // 移出已经加载完成的图片
+    imgList = imgList.filter((img, index) => !isLoadList.includes(index));
+  })();
+}
+// 节流函数
+function throttle(fun, wait) {
+  var lastTime = 0;
+  return function () {
+    var _this = this;
+    var _arg = arguments;
+    var nowTime = new Date().getTime();
+    if (nowTime - lastTime > wait) {
+      fun.apply(_this, _arg);
+      lastTime = nowTime;
+    }
+  };
+}
+// 默认执行一次加载首屏图片
+imgLazyLoad();
+// 节流执行
+document.addEventListener("scroll", throttle(imgLazyLoad, 200));
+===========================
+// 快排排序
+function quickSort(arr) {
+  // 数组长度为1 直接返回
+  if (arr.length <= 1) return arr;
+  var left = [],
+    right = [];
+  var centerIndex = Math.floor(arr.length / 2);
+  // 定义中间值
+  var center = arr[centerIndex];
+  for (let i = 0; i < arr.length; i++) {
+    // 小于中间值数据添加到left
+    if (arr[i] < center) {
+      left.push(arr[i]);
+    } else if (arr[i] > center) {
+      // 大于中间值数据添加到right
+      right.push(arr[i]);
+    }
+  }
+  // 递归返回 concat连接返回数据
+  return quickSort(left).concat([center], quickSort(right));
+}
+// 冒泡排序
+function bubbleSort(arr) {
+  for (var i = 0; i < arr.length - 1; i++) {
+    for (var j = i + 1; j < arr.length; j++) {
+      if (arr[i] > arr[j]) {
+        var temp = arr[j];
+        arr[j] = arr[i];
+        arr[i] = temp;
+      }
+    }
+  }
+  return arr;
+}
+=========
+二叉树遍历
+// 前序遍历
+function preorderTraversal(root, arr = []) {
+  if (root === null) return
+  arr.push(root.val)
+  preorderTraversal(root.left, arr)
+  preorderTraversal(root.right, arr)
+  return arr
+}
+// 中序遍历
+function inorderTraversal(root, arr = []) {
+  if (root === null) return
+  inorderTraversal(root.left, arr)
+  arr.push(root.val)
+  inorderTraversal(root.right, arr)
+  return arr
+}
+// 后序遍历
+function postorderTraversal(root, arr = []) {
+  if (root === null) return
+  postorderTraversal(root.left, arr)
+  postorderTraversal(root.right, arr)
+  arr.push(root.val)
+  return arr
+}
+==========
+字符串的全排列
+function permutation (str) {
+    let res = [str[0]]
+    for (let i = 1; i < str.length; i++) {
+        res = fp(res, str[i])
+    }
+    return [...new Set(res)].sort()
+}
+
+function fp (arr, ch) {
+    let tmp = []
+    for (let i = 0; i <= arr[0].length; i++) {
+        tmp = tmp.concat(arr.map((x) => x.slice(0, i) + ch + x.slice(i)))
+    }
+    return tmp
+}
+// console.log(permutation('abc'));
+
