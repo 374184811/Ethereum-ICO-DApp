@@ -13,3 +13,6 @@ go同步调度
 go调度器 为啥百万并发
 多对多模型 M：os线程 P：cpu上下文 G：协程
 两种队列 grq未分配G，lrq本地管理G队列
+M线程堵塞：G1 IO 脱离MP，G2从lrq出执行
+M闲置：从M2lrq拿一半任务
+防止os挂起：p挂到其他线程执行，syscall结束，G0挂到lrq或grq
