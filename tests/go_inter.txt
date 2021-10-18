@@ -1,0 +1,15 @@
+主线程等待所以协程
+等待组
+每个携程写入切片true，长度10结束
+go同步调度
+1.管道读写阻塞
+2.sync 包:读写锁；等待组，wg.wait()所以协程完成wg.Done()；
+3.条件变量，condwait 到有signal，broadcast
+4.原子炒作
+
+死锁
+读无缓冲channel阻塞，写入channel关闭，再range 
+
+go调度器 为啥百万并发
+多对多模型 M：os线程 P：cpu上下文 G：协程
+两种队列 grq未分配G，lrq本地管理G队列
