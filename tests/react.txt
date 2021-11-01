@@ -1,0 +1,39 @@
+mvc mvvm区别
+mvc用于后端spring mvc,前端backbone,分层清,数据流混乱,维护不好
+mvvm 前端 解决mv耦合问题,减少dom,提升性能
+
+====================================
+react angular
+设计思想不一样,Angular 库,react组件化,组件概念管理页面
+文件管理:js与 html的分离,一体化.
+react最大特点:state状态，渲染 view, 虚拟 dom 提高渲染页面的性能,组件复用问题，兼容性问题
+angularjs angular 要学习额外知识上手难
+angular 移动端
+====================================
+React 性能优化方案
+减少渲染shouldComponentUpdate,purecomp,函数memo
+加key,懒加载,减少http,不要内联
+=================================
+组件通信
+父子:props 
+兄弟:发布订阅pubs-sub,redux
+祖孙:发布订阅,redux,context,生产消费
+============================
+生命周期函数
+初始化阶段:construction cmpwillmount render cmpdidmount
+constructor getDerivedStatefromProps render cmpdidmount
+运行阶段:cmpwillreceiveProps shouldComponentUpdate cmpwillupdate render cmpdidupdate
+getDerivedStatefromProps shouldComponentUpdate  render getSnapshotBeforeUpdate cmpdidupdate
+
+引入fiber 任务可以被中断
+===================================
+函数,class组件
+无状态useState,无副作用useEffect,只展示
+类组件问题:逻辑复用,逻辑复杂难理解(拆小颗粒度)
+=================================
+diff 算法?
+把树形结构按照层级分解，只比较同级元素
+给列表结构的每个单元添加唯一的 key 属性，方便比较
+===============
+redux缺点
+action reducer修改样板代码太多
