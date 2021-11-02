@@ -22,6 +22,11 @@
 第二次握手：C可以确认 S收到；自己可以接受S//syn=1,ack
 第三次握手：S可以确认 C收到了自己发送//ack
 ==================================
+interface vs type
+定义类型范围:interface只能定义对象类型。而type声明可以声明任何类型，包括基础类型、联合类型或交叉类型
+扩展性:接口可以extends、implements,从而扩展多个接口或类。类型没有扩展功能
+合并声明:定义两个相同名称的接口会合并声明。定义两个同名的type会出现异常
+===================================
 垂直居中的方法
 (1)margin:auto 法
 css: div{
@@ -62,6 +67,10 @@ margin-left: -240px; /*width 的一半*/
 选择器的优先级
 总结排序：!important > style行内样式 > ID选择器 > 类选择器 > 元素 > 通配符 > 继承 > 浏览器默认属性
 ========================
+viewport
+<meta name="viewport" content="width=device-width, initial-scale=0.5, minimum-scale=0.5, maximum-scale=0.5"/>
+transform: scale(0.5,0.5);
+=======================
 三栏布局：
 1、使用 float+margin：
 给 div 设置 float：left，left 的 div 添加属性 margin-right：left 和 center 的间隔 px,right 的
