@@ -106,6 +106,13 @@ Gas Limit：这就像邮递员送信的最远距离的限制。假设他最终�
 EVM
 Storage memory stack
 ========================
+对称加密des aes
+缺陷：秘钥配送
+非对称rsa
+密文 = 明文e(e)modN
+
+数字签名：DSA RSA
+ecdsa
 我国公开的主要国密算法包括ZUC祖冲之算法、SM2、SM3、SM4、SM9五种，分别为流密码、非对称密码、散列算法、分组对称密码和非对称标识密码
 RC4;RSA,ECDSA;SHA256,MD5;DES,3DES;...
 https://blog.csdn.net/lwzhang1101/article/details/78773700
