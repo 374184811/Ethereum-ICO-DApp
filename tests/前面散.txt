@@ -18,7 +18,7 @@
 5.浏览器解析 6.渲染7.关闭tcp
 ===============
 解析：dom tree +css om=》render tree《=》layout tree 
-									=》painting，display
+=》painting，display
 ==========================================================
 CDN 原理：
 1.本地DNS解析CNAME 指向cdn DNS服务器 2.该服务器返回cdn 负载均衡Ip
