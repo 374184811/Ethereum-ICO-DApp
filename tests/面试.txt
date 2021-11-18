@@ -33,6 +33,8 @@ RAFT
 公有链 无法 强一致性，最终一致算法
 POW 比特币 莱特币 以太坊前三
 PoS 以太坊四
+
+http://salarycalculator.sinaapp.com/city/shenzhen
 DPOS bitshare
 PBFT heyperledger
 
