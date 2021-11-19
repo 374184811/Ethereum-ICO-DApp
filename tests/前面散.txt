@@ -124,7 +124,9 @@ window.name + iframe跨域：通过iframe的src属性由外域转向本地域，
 postMessage 跨域：可以跨域操作的 window 属性之一。
 CORS：服务端设置 Access-Control-Allow-Origin 即可，前端无须设置，若要带 cookie 请
 求，前后端都需要设置。
-代理跨域：启一个代理服务器，实现数据的转发
+node接口加请求头，res.header(Access-Control-Allow-Origin,“*”)
+代理跨域：启一个代理服务器，实现数据的转发：location /{proxy_pass http://...}
+webpack.config：proxy target
 =========================
 （1）什么是闭包：
 闭包是指有权访问另外一个函数作用域中的变量的函数。
