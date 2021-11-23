@@ -51,7 +51,15 @@ ng serve
 npm install -g cnpm --registry=https://registry.npm.taobao.org
 cnpm install
 
-errOR in /Users/kunzhang/Desktop/project/my-app/node_modules/@types/node/index.d.ts (20,1): Invalid 'reference' directive syntax
+https://www.it610.com/article/2674113.htm
+https://medium.com/prolanceer/optimizing-react-app-performance-using-web-workers-79266afd4a7
+https://www.toptal.com/javascript/interview-questions
+node
+https://www.cnblogs.com/sunshine-anycall/p/4680472.html
+https://segmentfault.com/a/1190000015841624
+https://www.it610.com/article/2674113.html
+react
+https://blog.csdn.net/weixin_43844392/article/details/108974719?spm=1001.2101.3001.6650.12&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7Edefault-12.no_search_link&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7Edefault-12.no_search_link
 
 1、从事基于hyperledgerfabric、cosmostendermint的区块链技术研究2、参与企业区块链平台架构设计和建设，参与智能合约代码开发；
 3、组织制定和实施技术决策和技术方案，组织架构设计与升级优化；4、指导项目团队成员的日常开发工作，解决开发中的技术问题。
