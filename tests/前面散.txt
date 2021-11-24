@@ -38,6 +38,13 @@ interface vs type
 扩展性:接口可以extends、implements,从而扩展多个接口或类。类型没有扩展功能
 合并声明:定义两个相同名称的接口会合并声明。定义两个同名的type会出现异常
 ===================================
+proxy 和 defineProperty 的区别
+definedProperty 是劫持对象的属性，不能监听属性的添加和删除，新增元素需要再次 definedProperty
+Proxy 劫持的是整个对象，不需要做特殊处理
+使用 defineProperty 时，我们修改原来的 obj 对象就可以触发拦截，而使用 Proxy，就必须修改代理对象，即 Proxy 的实例才可以触发拦截
+使用 defineProperty 需要遍历对象的每一个属性，对于性能会有一定的影响
+Proxy 可以对数组基于下标的修改的检测，长度修改的监测，而且对 Map、Set、WeakMap 和 WeakSet 的支持
+=====================================
 ES5与ES6继承
 1.ES5的继承实质上是先创建子类的实例对象，然后再将父类的方法添加到this上（Parent.apply(this)）.
 2.ES6的继承机制完全不同，实质上是先创建父类的实例对象this（所以必须先调用父类的super()方法），然后再用子类的构造函数修改this。
