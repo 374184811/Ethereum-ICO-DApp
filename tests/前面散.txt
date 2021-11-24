@@ -146,6 +146,10 @@ webpack.config：proxy target
 的引用，从而函数内部的值可以得以保留。
 封装：实现类和继承等
 ==========================
+BFC 一个独立的渲染区域，这个区域的子元素不会影响到外面的元素，解决margin 重合 塌陷 高度坍塌
+position 为 absolute 或 fixed 的元素；overflow 不为 visible；float：left，right
+display 为 非none，非block，非inline；inline-block，table-cell，table-caption，flex，inline-flex，grid
+========================
 固定定位 fixed：
 元素的位置相对于浏览器窗口是固定位置，即使窗口是滚动的它也不会移动。Fixed 定
 位使元素的位置与文档流无关，因此不占据空间。 Fixed 定位的元素和其他元素重叠。
