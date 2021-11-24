@@ -19,6 +19,9 @@
 ===============
 解析：dom tree +css om=》render tree《=》layout tree 
 =》painting，display
+可用Preformance API时：白屏时间 = firstPaint(<head>尾端window.firstPaint = Date.now()) 
+- performance.timing.navigationStart
+不可用Preformance API时：白屏时间 = firstPaint - pageStartTime
 ==========================================================
 CDN 原理：
 1.本地DNS解析CNAME 指向cdn DNS服务器 2.该服务器返回cdn 负载均衡Ip
