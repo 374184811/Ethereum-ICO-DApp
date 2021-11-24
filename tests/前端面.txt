@@ -538,4 +538,22 @@ function fp (arr, ch) {
     return tmp
 }
 // console.log(permutation('abc'));
+============================
+先同后异 先微后宏
+微任务：nextTick promise await
+async function async1{
+	console.log(a)
+	await async2()
+	console.log(b)
+	
+}
+function async2(){
+	console.log(c)
+	
+}
+
+function async1(){
+console.log(a)
+new promise((resolve)=>{console.log(c)}).then((res)=>console.log(b))
+}
 
